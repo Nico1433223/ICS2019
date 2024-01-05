@@ -7,8 +7,39 @@
 
 // this should be enough
 static char buf[65536];
+
+uint32_t choose(uint32_t n) {
+  return rand() % n;
+}
+
+static inline void gen_num() {
+  sprintf(buf, "%u", choose(100));
+}
+
+static inline void gen(char *buf, int n) {
+  int i;
+  for (i = 0; i < n; i ++) {
+    buf[i] = choose(26) + 'a';
+  }
+  buf[n] = '\0';
+}
+
+static inline void gen_rand_op() {
+  switch (choose(4)) {
+    case 0: buf[0] = '+'; break;
+    case 1: buf[0] = '-'; break;
+    case 2: buf[0] = '*'; break;
+    case 3: buf[0] = '/'; break;
+  }
+  buf[1] = '\0';
+}
+
 static inline void gen_rand_expr() {
-  buf[0] = '\0';
+  switch (choose(3)) {
+    case 0: gen_num(); break;
+    case 1: gen(buf, choose(10) + 1); break;
+    default: gen_rand_expr(); gen_rand_op(); gen_rand_expr(); break;
+  }
 }
 
 static char code_buf[65536];
