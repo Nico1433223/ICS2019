@@ -8,6 +8,9 @@ const char *regsl[] = {
 };
 
 void isa_reg_display() {
+  for(int i = 0; i < 32; i++){
+    printf("%s: 0x%08x\n", regsl[i], reg_l(i));
+  }
 }
 
 uint32_t isa_reg_str2val(const char *s, bool *success) {

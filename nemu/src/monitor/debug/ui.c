@@ -88,6 +88,23 @@ static int cmd_x(char *args) {
   return 0;
 }
 
+// Evaluate expression
+static int cmd_p(char *args) {
+  if (args == NULL) {
+    printf("No argument given\n");
+    return 0;
+  }
+  bool success = true;
+  uint32_t result = expr(args, &success);
+  if (success) {
+    printf("%u\n", result);
+  }
+  else {
+    printf("Invalid expression\n");
+  }
+  return 0;
+}
+
 static struct {
   char *name;
   char *description;
@@ -101,6 +118,7 @@ static struct {
   { "si", "Single step", cmd_si },
   { "info", "Print register state", cmd_info },
   { "x", "Scan memory", cmd_x },
+  { "p", "Evaluate expression", cmd_p },
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
