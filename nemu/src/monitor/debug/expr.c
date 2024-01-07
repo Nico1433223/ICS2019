@@ -203,6 +203,12 @@ uint32_t eval(int p, int q){
     else if(tokens[p].type == TK_REG){
       return isa_reg_str2val(tokens[p].str + 1);
     }
+    else if(tokens[p].type == TK_NEGATIVE){
+      return -eval(p + 1, q);
+    }
+    else if(tokens[p].type == TK_DEREFERENCE){
+      return vaddr_read(eval(p + 1, q), 4);
+    }
     else{
       assert(0);
     }
