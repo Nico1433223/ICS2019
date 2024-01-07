@@ -178,12 +178,6 @@ int dominant_operator(int p, int q){
           op_type = 5;
         }
       }
-      else if(tokens[i].type == TK_NEGATIVE || tokens[i].type == TK_DEREFERENCE){
-        if(op_type < 6){
-          op = i;
-          op_type = 6;
-        }
-      }
     }
   }
   return op;
@@ -194,6 +188,7 @@ uint32_t eval(int p, int q){
     assert(0);
   }
   else if(p == q){
+
     if(tokens[p].type == TK_NUM){
       return atoi(tokens[p].str);
     }
@@ -202,12 +197,6 @@ uint32_t eval(int p, int q){
     }
     else if(tokens[p].type == TK_REG){
       return isa_reg_str2val(tokens[p].str + 1);
-    }
-    else if(tokens[p].type == TK_NEGATIVE){
-      return -eval(p + 1, q);
-    }
-    else if(tokens[p].type == TK_DEREFERENCE){
-      return vaddr_read(eval(p + 1, q), 4);
     }
     else{
       assert(0);
@@ -219,6 +208,11 @@ uint32_t eval(int p, int q){
   else{
     int op = dominant_operator(p,
  q);
+    if(op == -1){
+      printf("Bad expression!\n");
+      assert(0);
+    }
+    if(tokens[op].type == TK_NEGATIVE || tokens[op].type == TK_DEREFERENCE) return eval(op, q); //unary operators
     uint32_t val1 = eval(p, op - 1);
     uint32_t val2 = eval(op + 1, q);
     switch(tokens[op].type){
