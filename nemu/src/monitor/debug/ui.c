@@ -8,6 +8,7 @@
 #include <readline/history.h>
 
 void cpu_exec(uint64_t);
+extern WP *head;
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -133,7 +134,7 @@ static int cmd_d(char *args) {
   }
   int n = atoi(args);
   for(WP* tmp = head; tmp; tmp = tmp->next){
-    if(tmp->NO == number){
+    if(tmp->NO == n){
       free_wp(tmp);
       return 0;
     }
