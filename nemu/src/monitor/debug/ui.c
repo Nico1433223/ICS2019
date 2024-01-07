@@ -131,8 +131,13 @@ static int cmd_d(char *args) {
     printf("No argument given\n");
     return 0;
   }
-  int NO = atoi(args);
-  delete_wp(NO);
+  int n = atoi(args);
+  for(WP* tmp = head; tmp; tmp = tmp->next){
+    if(tmp->NO == number){
+      free_wp(tmp);
+      return 0;
+    }
+  }
   return 0;
 }
 
