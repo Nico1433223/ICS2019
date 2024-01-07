@@ -58,6 +58,12 @@ static int cmd_info(char *args) {
   if (strcmp(args, "r") == 0) {
     isa_reg_display();
   }
+  if(strcmp(args, "w") == 0){
+    printf("%-6s%-20s%-10s\n","Num", "Experssion", "Result");
+    for(WP* tmp = head;tmp;tmp = tmp->next){
+      printf("%-6d%-20s%-6d\n", tmp->NO, tmp->expr, tmp->value);
+    }
+  }
   else {
     printf("Unknown argument '%s'\n", args);
   }
@@ -133,7 +139,7 @@ static int cmd_d(char *args) {
     return 0;
   }
   int n = atoi(args);
-  for(WP* tmp = head; tmp; tmp = tmp->next){
+  for(WP* tmp = NULL; tmp; tmp = tmp->next){
     if(tmp->NO == n){
       free_wp(tmp);
       return 0;
