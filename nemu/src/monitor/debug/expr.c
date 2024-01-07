@@ -164,7 +164,7 @@ int eval(int i, int j, bool *success){
     return 0;
   }
   else if(i == j){
-    if(tokens[i].type != TK_NUM && tokens[i].type != TK_HEXNUM && tokens[i].type != TK_REG){
+    if(tokens[i].type != TK_NUM && tokens[i].type != TK_HEX && tokens[i].type != TK_REG){
       *success = false;
       return 0;
     }
@@ -176,7 +176,7 @@ int eval(int i, int j, bool *success){
     else if(tokens[i].type == TK_NUM)
       sscanf(tokens[i].str, "%d", &number);
     else
-      sscanf(&(tokens[i].str[2]), "%x", &number); /
+      sscanf(&(tokens[i].str[2]), "%x", &number); 
     return number;
   }
   else if(check_parentheses(i,j)){
