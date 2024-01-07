@@ -7,7 +7,7 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ, TK_NEQ, TK_AND, TK_OR, TK_REG, TK_HEX, TK_NUM
+  TK_NOTYPE = 256, TK_EQ, TK_NEQ, TK_AND, TK_OR, TK_REG, TK_HEX, TK_NUM,TK_POINTER,TK_NEGATIVE
 
   /* TODO: Add more token types */
 
@@ -36,6 +36,8 @@ static struct rule {
    {"\\$(\\$0|ra|[sgt]p|t[0-6]|a[0-7]|s([0-9]|1[0-1]))", TK_REG},//registers
   {"0[xX][0-9a-fA-F]+",TK_HEX},    //hex numbers
   {"[0-9]+", TK_NUM},   // number
+  {"\\*", TK_POINTER}   //pointer
+  {"-",TK_NEGATIVE}     //negative
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -113,6 +115,8 @@ static bool make_token(char *e) {
                         if(substr_len > 32) assert(0);
                         strncpy(tokens[nr_token].str, substr_start, substr_len);
                         nr_token++; break;
+          case TK_POINTER: tokens[nr_token].type = TK_POINTER; nr_token++; break;
+          case TK_NEGATIVE: tokens[nr_token].type = TK_NEGATIVE; nr_token++; break;
           default:  //TODO();
                     assert(0);
         }
@@ -178,6 +182,18 @@ int dominant_operator(int p, int q){
           op_type = 5;
         }
       }
+      else if(tokens[i].type == TK_POINTER){
+        if(op_type < 6){
+          op = i;
+          op_type = 6;
+        }
+      }
+      else if(tokens[i].type == TK_NEGATIVE){
+        if(op_type < 7){
+          op = i;
+          op_type = 7;
+        }
+      }
     }
   }
   return op;
@@ -218,6 +234,8 @@ uint32_t eval(int p, int q){
       case TK_NEQ: return val1 != val2;
       case TK_AND: return val1 && val2;
       case TK_OR: return val1 || val2;
+      case TK_POINTER: return vaddr_read(val2, 4);
+      case TK_NEGATIVE: return -val2;
       default: assert(0);
     }
   }
@@ -234,6 +252,11 @@ uint32_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   // TODO();
+  for(int i = 0; i < nr_token; i++){
+    if(tokens[i].type == '*' && (i == 0 || (tokens[i - 1].type != TK_NUM && tokens[i - 1].type != TK_HEX && tokens[i - 1].type != TK_REG && tokens[i - 1].type != ')'))){
+      tokens[i].type = TK_POINTER;
+    }
+  }
   *success = true;
   return eval(0, nr_token - 1);
 }

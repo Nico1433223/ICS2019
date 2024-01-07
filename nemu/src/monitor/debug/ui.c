@@ -105,6 +105,37 @@ static int cmd_p(char *args) {
   return 0;
 }
 
+// Set watchpoint
+static int cmd_w(char *args) {
+  if (args == NULL) {
+    printf("No argument given\n");
+    return 0;
+  }
+  bool success = true;
+  uint32_t result = expr(args, &success);
+  if (success) {
+    WP *wp = new_wp();
+    strcpy(wp->expr, args);
+    wp->value = result;
+    printf("Watchpoint %d: %s\n", wp->NO, wp->expr);
+  }
+  else {
+    printf("Invalid expression\n");
+  }
+  return 0;
+}
+
+// Delete watchpoint
+static int cmd_d(char *args) {
+  if (args == NULL) {
+    printf("No argument given\n");
+    return 0;
+  }
+  int NO = atoi(args);
+  delete_wp(NO);
+  return 0;
+}
+
 static struct {
   char *name;
   char *description;
@@ -119,6 +150,8 @@ static struct {
   { "info", "Print register state", cmd_info },
   { "x", "Scan memory", cmd_x },
   { "p", "Evaluate expression", cmd_p },
+  { "w", "Set watchpoint", cmd_w },
+  { "d", "Delete watchpoint", cmd_d },
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
