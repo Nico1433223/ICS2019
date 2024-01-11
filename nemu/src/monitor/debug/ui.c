@@ -60,7 +60,7 @@ static int cmd_info(char *args) {
   }
   if(strcmp(args, "w") == 0){
     printf("%-6s%-20s%-10s\n","Num", "Experssion", "Result");
-    for(WP* tmp = head;tmp;tmp = tmp->next){
+    for(WP* tmp = NULL;tmp;tmp = tmp->next){
       printf("%-6d%-20s%-6d\n", tmp->NO, tmp->expr, tmp->value);
     }
   }
